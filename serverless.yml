@@ -10,7 +10,7 @@ service: sls-notes-backend
 provider:
   name: aws
   runtime: nodejs12.x
-  region: us-west-2
+  region: us-west-1
   stage: prod
   memorySize: 128
   timeout: 5
@@ -25,7 +25,7 @@ resources:
       DeletionPolicy: Retain
       Properties:
         TableName: ${self:provider.enviroment.NOTES_TABLE}
-        AttributeDeginitions:
+        AttributeDefinitions:
           - AttributeName: user_id
             AttributeType: S
           - AttributeName: timestamp
@@ -40,16 +40,16 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-          GlobalSecondaryIndexes:
-            - IndexName: note_id-index
-              KeySchema:
-                - AttributeName: note_id
-                  KeyType: HASH
-              Projection:
-                ProjectionType: ALL
-              ProvisionedThroughput:
-                ReadCapacityUnits: 1
-                WriteCapacityUnits: 1
+        GlobalSecondaryIndexes:
+          - IndexName: note_id-index
+            KeySchema:
+              - AttributeName: note_id
+                KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
 # you can overwrite defaults here
 #  stage: dev
 #  region: us-east-1
