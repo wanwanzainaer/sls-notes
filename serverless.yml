@@ -10,6 +10,11 @@ service: sls-notes-backend
 provider:
   name: aws
   runtime: nodejs12.x
+  region: us-west-2
+  stage: prod
+  memorySize: 128
+  timeout: 5
+  endpointType: regional
 # you can overwrite defaults here
 #  stage: dev
 #  region: us-east-1
