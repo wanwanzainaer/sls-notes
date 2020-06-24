@@ -16,5 +16,8 @@
     "underscore": "^1.10.2",
     "uuid": "^8.1.0",
     "uuidv4": "^6.1.0"
+  },
+  "devDependencies": {
+    "serverless-domain-manager": "^4.1.1"
   }
 }

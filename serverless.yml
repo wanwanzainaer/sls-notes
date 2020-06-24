@@ -9,6 +9,7 @@ service: sls-notes-backend
 
 plugins:
   - serverless-offline
+  - serverless-domain-manager
 
 custom:
   allowedHeaders:
@@ -22,6 +23,12 @@ custom:
     - X-Amz-User-Agent
     - app_user_id
     - app_user_name
+  customDomain:
+    domainName: api.simonho.app
+    basePath: 'v1'
+    stage: ${self:provider.stage}
+    certificateName: simonho.app
+    createRoute53Record: true
 
 provider:
   name: aws
@@ -99,7 +106,7 @@ resources:
       Type: AWS::DynamoDB::Table
       DeletionPolicy: Retain
       Properties:
-        TableName: ${self:provider.enviroment.NOTES_TABLE}
+        TableName: ${self:provider.environment.NOTES_TABLE}
         AttributeDefinitions:
           - AttributeName: user_id
             AttributeType: S
