@@ -9,9 +9,12 @@ const getResponseHeaders = () => {
     'Access-Control-Allow-Origin': '*',
   };
 };
+const  getIdToken = (headers) => {
+  return headers.Authorization;
+};
 
 module.exports = {
   getResponseHeaders,
-  getUserName,
+  getUserName,getIdToken
   getUserId,
 };

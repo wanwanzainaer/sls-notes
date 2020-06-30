@@ -40,6 +40,7 @@ provider:
   endpointType: regional
   environment:
     NOTES_TABLE: ${self:service}-${opt:stage, self:provider.stage}
+    COGNITO_IDENTITY_POOL_ID: us-east-1:d54b4fb2-21d7-4885-996b-91aab6e7149a
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -49,6 +50,16 @@ provider:
       Resource: 'arn:aws:dynamodb:${opt:region,self:provider.region}:*:table/${self:provider.environment.NOTES_TABLE}'
 
 functions:
+  authenticate-google:
+    handler: api/authenicate-google.handler
+    description: Google IDP Authentication
+    events:
+      - http:
+          path: auth
+          method: get
+          cors:
+            origin: '*'
+            headers: ${self:custom.allowedHeaders}
   add-note:
     handler: api/add-note.handler
     description: POST /note
@@ -56,6 +67,7 @@ functions:
       - http:
           path: note
           method: post
+          authorizer: aws_iam
           cors:
             origin: '*'
             headers: ${self:custom.allowedHeaders}
@@ -66,6 +78,7 @@ functions:
       - http:
           path: note
           method: patch
+          authorizer: aws_iam
           cors:
             origin: '*'
             headers: ${self:custom.allowedHeaders}
@@ -76,6 +89,7 @@ functions:
       - http:
           path: notes
           method: get
+          authorizer: aws_iam
           cors:
             origin: '*'
             headers: ${self:custom.allowedHeaders}
@@ -86,6 +100,7 @@ functions:
       - http:
           path: note/n/{note_id}
           method: get
+          authorizer: aws_iam
           cors:
             origin: '*'
             headers: ${self:custom.allowedHeaders}
@@ -96,6 +111,7 @@ functions:
       - http:
           path: note/t/{timestamp}
           method: delete
+          authorizer: aws_iam
           cors:
             origin: '*'
             headers: ${self:custom.allowedHeaders}
@@ -132,6 +148,16 @@ resources:
             ProvisionedThroughput:
               ReadCapacityUnits: 1
               WriteCapacityUnits: 1
+
+    GatewayResponseDefault4xx:
+      Type: AWS::apiGateway::GatewayResponse
+      Promperties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: '*'
+          gatewayresponse.header.Access-Control-Allow-Headers: '*'
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'
 # you can overwrite defaults here
 #  stage: dev
 #  region: us-east-1
